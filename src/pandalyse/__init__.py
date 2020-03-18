@@ -9,3 +9,10 @@ except DistributionNotFound:
     __version__ = 'unknown'
 finally:
     del get_distribution, DistributionNotFound
+
+from .analysis import InstantAnalysisDelivery
+from .selector import Selector
+from .trainings import Trainer
+from .catalogue import Catalogue
+
+analysis = InstantAnalysisDelivery.Instance()

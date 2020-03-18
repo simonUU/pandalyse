@@ -6,7 +6,6 @@
 """
 
 from .utilities import Singleton, Base, IsIterable
-from .jobsystem import JobSystem
 
 import glob
 import os
