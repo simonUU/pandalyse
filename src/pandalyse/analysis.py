@@ -56,7 +56,7 @@ class Analysis(Base):
         self.selectors = Catalogue(self.config['selectors'], suff='sel', autoload=True, data_type=Selector)
         self.trainings = Catalogue(self.config['trainings'], suff='trainer', autoload=False, data_type=Trainer)
         self.values = Catalogue(self.config['values'], suff='val',
-                                save_fcn=yaml.dump, load_fcn=yaml.load, autoload=True, binary_file=False)
+                                save_fcn=yaml.dump, load_fcn=yaml.load, autoload=True, binary_file=False, load_kwdct={'Loader': yaml.Loader})
 
     def init(self, force=False):
         """ Inititate the analysis file
@@ -68,7 +68,7 @@ class Analysis(Base):
         if os.path.isfile(self.location + ANALYSISFILE) and not force:
             self.io.warn("Previous analysis found. " + self.location + ANALYSISFILE)
             return
-        loc = os.getcwd()
+        loc = self.location
         self._write_config(loc=loc)
         self._init_managers()
 
@@ -106,7 +106,7 @@ class Analysis(Base):
             self.io.info("Using default configuration.")
         else:
             self.io.info("Found existing analysis at " + self.location + ANALYSISFILE)
-            self.config = AttrDict(yaml.load(open(self.location + ANALYSISFILE)))
+            self.config = AttrDict(yaml.load(open(self.location + ANALYSISFILE), Loader=yaml.SafeLoader))
 
     def set_data_location(self, location=None):
         self.config.data = location

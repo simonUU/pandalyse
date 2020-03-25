@@ -6,21 +6,18 @@ This is the documentation of **pandalyse**.
 
 .. note::
 
-    This is the main page of your project's `Sphinx`_ documentation.
-    It is formatted in `reStructuredText`_. Add additional pages
-    by creating rst-files in ``docs`` and adding them to the `toctree`_ below.
-    Use then `references`_ in order to link them from this page, e.g.
-    :ref:`authors` and :ref:`changes`.
+    This package is in the early stage of development.
 
-    It is also possible to refer to the documentation of other Python packages
-    with the `Python domain syntax`_. By default you can reference the
-    documentation of `Sphinx`_, `Python`_, `NumPy`_, `SciPy`_, `matplotlib`_,
-    `Pandas`_, `Scikit-Learn`_. You can add more by extending the
-    ``intersphinx_mapping`` in your Sphinx's ``conf.py``.
+What is pandalyse
+-----------------
 
-    The pretty useful extension `autodoc`_ is activated by default and lets
-    you include documentation from docstrings. Docstrings can be written in
-    `Google style`_ (recommended!), `NumPy style`_ and `classical style`_.
+Pandalyse offers an analysis environment and tools for pandas.
+The main features are
+
+* **Selector**: Define and store cuts in a Selector object: `cutted_df = selector(df)`
+* **Trainer**: Train multiple mva with scikit-learn interface in the way: `trainer.fit(signal_df, background_df)`
+* **Analysis**: Store and retrive Selectors, Trainings, numpy-arrays and dataframes in predefined locations: `df = ana.data.get("MySignalData")`
+
 
 
 Contents

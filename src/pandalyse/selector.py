@@ -14,7 +14,7 @@
 
 from __future__ import print_function
 
-from .utilities import Base
+from .utilities import Base, IsIterable
 
 import pandas as pd
 import numpy as np
@@ -32,7 +32,7 @@ class Selector(Base):
         for returning the selected columns with true.
 
     """
-    def __init__(self):
+    def __init__(self, cuts=None):
         Base.__init__(self, 'Selector')
         self.io.debug("Selector")
         self.cutlist = []
@@ -42,6 +42,14 @@ class Selector(Base):
         self.applied = False
         self.last_mask = None
         self.id_last = None
+
+        if cuts is not None:
+            if isinstance(cuts, str):
+                self.add_cut(cuts)
+            else:
+                assert IsIterable, "Please provide string or list of strings as default cuts"
+                for c in cuts:
+                    self.add_cut(c)
 
     def __call__(self, df=None, temp_cut=None, force=False, ):
         """ Main interface for the selector
@@ -56,7 +64,7 @@ class Selector(Base):
             DataFrame with a mask
         """
         if df is None:
-            self.io.error("DataFrame is None")
+            self.io.info("No DataFrame given.")
             self.show()
             return
         if temp_cut is not None:
@@ -143,6 +151,8 @@ class Selector(Base):
         if cut not in self.cutlist:
             self.io.debug(cut)
             self.cutlist.append(cut)
+        else:
+            self.io.warn(f"Cut '{cut}' already added.")
 
     def change_cut(self, i, cut):
         """ Change a cut at index i
@@ -178,7 +188,7 @@ class Selector(Base):
 
         self.last_mask = self.get_mask(df)
         data = df.loc[self.last_mask]
-        self.initiate(data)
+        # self.initiate(data)
         return data
 
     def get_mask(self, df):

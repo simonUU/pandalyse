@@ -19,7 +19,7 @@ class Catalogue(AttrDict, Base):
 
     """
     def __init__(self, location=None, suff='pkl', save_fcn=pickle.dump, load_fcn=pickle.load, create_files=True,
-                 autoload=False, data_type=None, binary_file=True,
+                 autoload=False, data_type=None, binary_file=True, load_kwdct={},
                  ):
         AttrDict.__init__(self)
         Base.__init__(self, "Catalogue"+'.'+suff)
@@ -30,6 +30,7 @@ class Catalogue(AttrDict, Base):
         self._files = {}
         self._save_fcn = save_fcn
         self._load_fcn = load_fcn
+        self._load_kwdct = load_kwdct
         self._create_file = create_files
         self._autoload = autoload
         self._data_type = data_type
@@ -82,9 +83,9 @@ class Catalogue(AttrDict, Base):
 
         if self._create_file:
             with open(filename, 'r'+self._binary_file) as f:
-                obj = self._load_fcn(f)
+                obj = self._load_fcn(f, **self._load_kwdct)
         else:
-            obj = self._load_fcn(filename)
+            obj = self._load_fcn(filename, **self._load_kwdct)
         if isinstance(obj, dict):
             obj = AttrDict(obj)
         return obj
