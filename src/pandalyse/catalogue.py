@@ -63,7 +63,7 @@ class Catalogue(AttrDict, Base):
 
         """
         if os.path.isfile(filename) and not overwrite:
-            self.io.warn("The file already exist, confirm with overwrite=True")
+            self.io.warning("The file already exist, confirm with overwrite=True")
             return
         if self._create_file:
             with open(filename, 'w'+self._binary_file) as f:

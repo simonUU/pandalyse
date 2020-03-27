@@ -139,7 +139,7 @@ class Selector(Base):
 
         """
         if not self.applied:
-            self.io.warn('There are some un-applied cuts')
+            self.io.warning('There are some un-applied cuts')
 
     def add_cut(self, cut,):
         """ Main functionality to add cuts
@@ -152,7 +152,7 @@ class Selector(Base):
             self.io.debug(cut)
             self.cutlist.append(cut)
         else:
-            self.io.warn(f"Cut '{cut}' already added.")
+            self.io.warning(f"Cut '{cut}' already added.")
 
     def change_cut(self, i, cut):
         """ Change a cut at index i
@@ -240,7 +240,7 @@ class Selector(Base):
         """
         data = self.apply_cuts(df,)
         if len(data) < n:
-            self.io.warn("Data set is not long enough")
+            self.io.warning("Data set is not long enough")
             return data.sample(n)
         else:
             return data.sample(n)
@@ -269,7 +269,7 @@ class Selector(Base):
                     cut_mask[isel] = True
                     mask = mask & cut_mask
             else:
-                self.io.warn("Can't apply temporary cut")
+                self.io.warning("Can't apply temporary cut")
         self.temp_cut = None
         return mask
 
@@ -285,7 +285,7 @@ class MultiSelector(Base):
         The general approach is, that certain masks are created for cuts and the user sees the original DataFrame
         through the masks.
 
-        The special cuts dictionary hods function pointers for functions taking a DataFrame and returning a boolean mask
+        The special cuts dictionary holds function pointers for functions taking a DataFrame and returning a boolean mask
         for returning the selected columns with true.
 
     """
@@ -353,10 +353,6 @@ class MultiSelector(Base):
 
         ret_df = None
 
-        # if df is None:
-        #     self.io.error("DataFrame is None")
-        #     self.show()
-        #     return
         if temp_cut is not None:
             assert isinstance(temp_cut, str), "Please use a string to cut on the data frame"
             self.temp_cut = temp_cut

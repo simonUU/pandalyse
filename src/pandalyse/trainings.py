@@ -13,167 +13,170 @@ import numpy as np
 import pandas as pd
 from time import time
 
+##
+## Depreciated 
+## vvvvvvvvvvv
+##
+# class TrainingManager(Base):
+#     """ This class manages all the available trainings
 
-class TrainingManager(Base):
-    """ This class manages all the available trainings
+#     """
+#     def __init__(self, location=None):
+#         Base.__init__(self, "TrainingManager")
+#         self.io.debug("Initiating Training Manager")
+#         self.trainings_location = location
+#         self.trainings = None
+#         self.names = None
+#         self.active_trainer = None
 
-    """
-    def __init__(self, location=None):
-        Base.__init__(self, "TrainingManager")
-        self.io.debug("Initiating Training Manager")
-        self.trainings_location = location
-        self.trainings = None
-        self.names = None
-        self.active_trainer = None
+#     def initialize(self):
+#         self.trainings = glob.glob(self.trainings_location+self.trainings_prefix + '*')
+#         self.names = [i.split(self.trainings_prefix)[1] for i in self.trainings]
 
-    def initialize(self):
-        self.trainings = glob.glob(self.trainings_location+self.trainings_prefix + '*')
-        self.names = [i.split(self.trainings_prefix)[1] for i in self.trainings]
+#     def get_trainer(self, name=None):
+#         self.initialize()
+#         if name is None:
+#             self.io.debug("Loading active Trainer")
+#             if self.active_trainer is not None:
+#                 return self.active_trainer
+#             else:
+#                 if self.active_name is not None:
+#                     self.active_trainer = MultiTrainer(self.trainings_location + self.trainings_prefix
+#                                                        + self.active_name, self.active_name)
+#                     return self.active_trainer
+#         else:
+#             self.io.debug("Loading trainer " + name)
+#             if name in self.names:
+#                 trainer = MultiTrainer(self.trainings_location + self.trainings_prefix + name, name)
+#                 return trainer
+#             else:
+#                 self.io.error("This trainer does not seem to exist")
+#         self.error("Cant get Trainer for reasons..")
+#         return None
 
-    def get_trainer(self, name=None):
-        self.initialize()
-        if name is None:
-            self.io.debug("Loading active Trainer")
-            if self.active_trainer is not None:
-                return self.active_trainer
-            else:
-                if self.active_name is not None:
-                    self.active_trainer = MultiTrainer(self.trainings_location + self.trainings_prefix
-                                                       + self.active_name, self.active_name)
-                    return self.active_trainer
-        else:
-            self.io.debug("Loading trainer " + name)
-            if name in self.names:
-                trainer = MultiTrainer(self.trainings_location + self.trainings_prefix + name, name)
-                return trainer
-            else:
-                self.io.error("This trainer does not seem to exist")
-        self.error("Cant get Trainer for reasons..")
-        return None
+#     def ls(self, ):
+#         self.io.debug("Listing all Trainings")
+#         self.initialize()
+#         self.io.info("Training location : " + self.trainings_location)
+#         self.io.info("Training prefix : " + self.trainings_prefix)
+#         self.io.info("Active Training : " + self.active_name)
+#         self.io.info(self.names)
 
-    def ls(self, ):
-        self.io.debug("Listing all Trainings")
-        self.initialize()
-        self.io.info("Training location : " + self.trainings_location)
-        self.io.info("Training prefix : " + self.trainings_prefix)
-        self.io.info("Active Training : " + self.active_name)
-        self.io.info(self.names)
+#     def set_active(self, train_name):
+#         self.io.debug("Activating training folder " + train_name)
+#         self.initialize()
+#         if train_name not in self.names:
+#             self.io.info(train_name)
+#             self.io.info(self.names)
+#             self.warn("Training not found")
+#             return
+#         self.active_name = train_name
 
-    def set_active(self, train_name):
-        self.io.debug("Activating training folder " + train_name)
-        self.initialize()
-        if train_name not in self.names:
-            self.io.info(train_name)
-            self.io.info(self.names)
-            self.warn("Training not found")
-            return
-        self.active_name = train_name
+#     def create_training(self, trainer, name):
+#         self.io.info("Creating a new training for " + name)
 
-    def create_training(self, trainer, name):
-        self.io.info("Creating a new training for " + name)
+#         assert isinstance(trainer, Trainer), "please insert trainer instance"
+#         assert isinstance(name, str), "please enter a valid string"
 
-        assert isinstance(trainer, Trainer), "please insert trainer instance"
-        assert isinstance(name, str), "please enter a valid string"
-
-        new_dir_name = self.trainings_location + self.trainings_prefix + name
-        try:
-            os.mkdir(new_dir_name)
-        except :
-            self.io.error("no way")
-        else:
-            pass
-            #trainer.save(new_dir_name + '/' + s.DEFAULTTRAINING)
+#         new_dir_name = self.trainings_location + self.trainings_prefix + name
+#         try:
+#             os.mkdir(new_dir_name)
+#         except :
+#             self.io.error("no way")
+#         else:
+#             pass
+#             #trainer.save(new_dir_name + '/' + s.DEFAULTTRAINING)
 
 
-class MultiTrainer(Base):
-    """ This class manages the trainings for all the decay channels.
+# class MultiTrainer(Base):
+#     """ This class manages the trainings for all the decay channels.
 
-    """
-    def __init__(self, location, name, hashes):
-        Base.__init__(self, "MultiTrainer")
-        self.io.debug("Initiating MultiTrainer " + name)
-        self.location = location
-        self.hashes = hashes
-        self.trainers = {}
-        self.name = name
-        self.active = False
+#     """
+#     def __init__(self, location, name, hashes):
+#         Base.__init__(self, "MultiTrainer")
+#         self.io.debug("Initiating MultiTrainer " + name)
+#         self.location = location
+#         self.hashes = hashes
+#         self.trainers = {}
+#         self.name = name
+#         self.active = False
 
-        self.default_training = None
+#         self.default_training = None
 
-        if not os.path.exists(self.location):
-            self.io.error("My location does not Exist 0_O")
-            return
-        self.default_training = self.location
+#         if not os.path.exists(self.location):
+#             self.io.error("My location does not Exist 0_O")
+#             return
+#         self.default_training = self.location
 
-    def activate(self):
-        """Activate the multi trainer
+#     def activate(self):
+#         """Activate the multi trainer
 
-            This method performs some consistency checks and activates itself afterwards.
+#             This method performs some consistency checks and activates itself afterwards.
 
-        """
-        self.io.debug("Activating all trainings")
+#         """
+#         self.io.debug("Activating all trainings")
 
-        trainers = glob.glob(self.location+'/*.trainer')
-        names = [int(n.split('.')[0].split('/')[-1]) for n in trainers]
-        self.trainers = {}
+#         trainers = glob.glob(self.location+'/*.trainer')
+#         names = [int(n.split('.')[0].split('/')[-1]) for n in trainers]
+#         self.trainers = {}
 
-        for h in self.hashes:
-            if h not in names:
-                self.io.error("I cannot find " + str(h) + " in the folder")
+#         for h in self.hashes:
+#             if h not in names:
+#                 self.io.error("I cannot find " + str(h) + " in the folder")
 
-        for t in trainers:
-            hash = int(t.split('.')[0].split('/')[-1])
-            self.trainers[hash] = Trainer(t)
+#         for t in trainers:
+#             hash = int(t.split('.')[0].split('/')[-1])
+#             self.trainers[hash] = Trainer(t)
 
-        self.active = True
+#         self.active = True
 
-    def add_prediction(self, df, name=None, prefix=''):
-        self.io.info("Adding prediction for " + self.name)
+#     def add_prediction(self, df, name=None, prefix=''):
+#         self.io.info("Adding prediction for " + self.name)
 
-        assert isinstance(df, pd.DataFrame), "We need data frames!!"
+#         assert isinstance(df, pd.DataFrame), "We need data frames!!"
 
-        if not self.active:
-            self.activate()
+#         if not self.active:
+#             self.activate()
 
-        if name is None:
-            name = prefix + self.name
+#         if name is None:
+#             name = prefix + self.name
 
-        df[name] = 0
+#         df[name] = 0
 
-        for h in self.trainers:
-            t = self.trainers[h]
-            sel = abs(df.decay_hash) == h
-            ret = t.ret_prediction(df[sel])
-            df.loc[sel, name] = ret
+#         for h in self.trainers:
+#             t = self.trainers[h]
+#             sel = abs(df.decay_hash) == h
+#             ret = t.ret_prediction(df[sel])
+#             df.loc[sel, name] = ret
 
-    def train_all(self):
-        self.io.info("Training all channels")
-        for h in self.hashes:
-            self.train_hash(h)
+#     def train_all(self):
+#         self.io.info("Training all channels")
+#         for h in self.hashes:
+#             self.train_hash(h)
 
-    def train_hash(self, h):
-        h = int(h)
-        self.io.info("Training hash " + str(h))
-        if not int(h) in self.hashes:
-            self.io.error("This hash is not supported..")
-            return
-        self.io.debug("Creating new Trainer from default")
-        trainer = Trainer().load(self.default_training)
+#     def train_hash(self, h):
+#         h = int(h)
+#         self.io.info("Training hash " + str(h))
+#         if not int(h) in self.hashes:
+#             self.io.error("This hash is not supported..")
+#             return
+#         self.io.debug("Creating new Trainer from default")
+#         trainer = Trainer().load(self.default_training)
 
-        self.io.debug("Loading training data")
-        sig = None #ana.dm.get_train_sig(int(h))
-        sig = sig[sig.MCflag > 0]
-        bkg = None #ana.dm.get_train_bkg(int(h))
-        bkg = bkg[bkg.MCflag <= 0]
-        # datmanager get trainings data...
+#         self.io.debug("Loading training data")
+#         sig = None #ana.dm.get_train_sig(int(h))
+#         sig = sig[sig.MCflag > 0]
+#         bkg = None #ana.dm.get_train_bkg(int(h))
+#         bkg = bkg[bkg.MCflag <= 0]
+#         # datmanager get trainings data...
 
-        self.io.debug('Starting Training')
+#         self.io.debug('Starting Training')
 
-        trainer.fit(sig, bkg)
-        trainer.save(self.location + '/%d.pkl' % h)
-        self.trainers[h] = trainer
+#         trainer.fit(sig, bkg)
+#         trainer.save(self.location + '/%d.pkl' % h)
+#         self.trainers[h] = trainer
 
-        self.io.info('Training done')
+#         self.io.info('Training done')
 
 
 class Trainer(Base):
@@ -224,7 +227,14 @@ class Trainer(Base):
     def add_method(self, m_name, m):
         self.methods[m_name] = m
 
+    def _df(self, df):
+        """ Select variables from DataFrame if there are predefined
+        """
+        return df if self.variables is None else df[self.variables] 
+
     def fit(self, sig, bkg, w=None):
+        for i in [sig, bkg]:
+            assert isinstance(i, pd.DataFrame), "Please provide pandas DataFrames for now"
         X = sig.append(bkg)
         X = X.fillna(-999)
         y = np.append(np.zeros(len(sig)) == 0, np.zeros(len(bkg)) > 1)
@@ -233,12 +243,14 @@ class Trainer(Base):
             w = np.append(np.ones(len(sig)), np.array(w))
 
         for m in self.methods:
-            self.io.info("Training " + m + ' with ' + str(len(self.variables)) +  " Variables")
+            n_vars = 'all' if self.variables is None else str(len(self.variables))
+            self.io.info("Training " + m + ' with ' + n_vars +  " Variables")
             start = time()
             try:
-                self.methods[m].fit(X[self.variables], y, w)
+                self.methods[m].fit(self._df(X), y, w)
             except Exception:
-                self.methods[m].fit(X[self.variables], y)
+                self.io.warning(f"Method {m} may not support weights")
+                self.methods[m].fit(self._df(X), y)
             end = time()
             self.io.info('This took {:.2f} seconds'.format(end-start))
 
@@ -246,19 +258,19 @@ class Trainer(Base):
         d.fillna(-999, inplace=True)
         for name in self.methods:
             try:
-                d[name+outname] = self.methods[name].predict_proba(d[self.variables])[:, 1]
+                d[name+outname] = self.methods[name].predict_proba(self._df(d))[:, 1]
             except ValueError:
                 self.error("Input data has bad values.. skipping training")
                 return
             except AttributeError:
                 self.warn("no proba")
-                d[name+outname] = self.methods[name].predict(d[self.variables])
+                d[name+outname] = self.methods[name].predict(self._df(d))
             if rank:
-                group = ['expno', 'runno', 'evtno']
+                group = ['expno', 'runno', 'evtno']  # Default for Belle 1
                 if isinstance(rank, list):
                     group = rank
-                if 'fileNO' in d.columns:
-                    group.append('fileNO')
+                # if 'fileNO' in d.columns:
+                #     group.append('fileNO')
                 d[name+outname+'_rank'] = d.groupby(group)[name+outname].rank(ascending=False)
         return d
 
@@ -269,13 +281,13 @@ class Trainer(Base):
         d.fillna(-999, inplace=True)
         for name in self.methods:
             try:
-                    return self.methods[name].predict_proba(d[self.variables])[:, 1]
+                    return self.methods[name].predict_proba(self._df(d))[:, 1]
             except ValueError:
                 self.io.error("Input data has bad values.. skipping training")
                 return np.zeros(len(d))
             except AttributeError:
                 self.io.warn("no proba")
-                return self.methods[name].predict(d[self.variables])
+                return self.methods[name].predict(self._df(d))
         else:
             self.io.warn('Did not return training')
 
@@ -293,7 +305,7 @@ class Trainer(Base):
 
         """
         X = sig.append(bkg)
-        X = X.fillna(-999)[self.variables]
+        X = self._df(X.fillna(-999))
         y = np.append(np.zeros(len(sig)) == 0, np.zeros(len(bkg)) > 1)
 
         X = self.add_prediction(X)
@@ -311,7 +323,7 @@ class Trainer(Base):
             pur = s / np.arange(1, len(sort) + 1)
 
             plt.plot(eff, pur, label=m)
-            self.io.info('{:30s} Score: {:.2f}'.format(m, self.methods[m].score(X[self.variables], y)))
+            self.io.info('{:30s} Score: {:.2f}'.format(m, self.methods[m].score(self._df(X), y)))
 
         plt.xlim(0.0, 1.05)
         plt.ylim(0.0, 1.05)

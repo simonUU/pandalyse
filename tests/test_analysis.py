@@ -48,9 +48,8 @@ def test_analysis_catalogue_nparray(tmp_path):
     ana.init()
     ana.values.add(np.array([666]), "test_nparray")
     # print(type(ana.values.test_nparray))
-    print(pandalyse.__version__)
-    # assert ana.values.test_nparray[0] == 666
-    assert False
+    # print(pandalyse.__version__)
+    assert ana.values.test_nparray[0] == 666
     
     
     

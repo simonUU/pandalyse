@@ -38,6 +38,11 @@ class Analysis(Base):
     A local configuration in ANALYSISFILE can store all the necessary information.
 
     """
+    data = None
+    selector = None
+    trainings = None
+    values = None
+
     def __init__(self, loc=None):
         """
 
@@ -50,13 +55,13 @@ class Analysis(Base):
         self.config = AttrDict({'data': None, 'selectors': None, 'values': None, 'trainings': None})
 
         self._init_at_location()
-
-        self.data = Catalogue(self.config['data'], suff='hdf',
-                              save_fcn=fcn_save_dataframe, load_fcn=pd.read_hdf, create_files=False)
-        self.selectors = Catalogue(self.config['selectors'], suff='sel', autoload=True, data_type=Selector)
-        self.trainings = Catalogue(self.config['trainings'], suff='trainer', autoload=False, data_type=Trainer)
-        self.values = Catalogue(self.config['values'], suff='val',
-                                save_fcn=yaml.dump, load_fcn=yaml.load, autoload=True, binary_file=False, load_kwdct={'Loader': yaml.Loader})
+        self._init_managers()
+        # self.data = Catalogue(self.config['data'], suff='hdf',
+        #                       save_fcn=fcn_save_dataframe, load_fcn=pd.read_hdf, create_files=False)
+        # self.selectors = Catalogue(self.config['selectors'], suff='sel', autoload=True, data_type=Selector)
+        # self.trainings = Catalogue(self.config['trainings'], suff='trainer', autoload=False, data_type=Trainer)
+        # self.values = Catalogue(self.config['values'], suff='val',
+        #                         save_fcn=yaml.dump, load_fcn=yaml.load, autoload=True, binary_file=False)
 
     def init(self, force=False):
         """ Inititate the analysis file
@@ -66,7 +71,7 @@ class Analysis(Base):
 
         """
         if os.path.isfile(self.location + ANALYSISFILE) and not force:
-            self.io.warn("Previous analysis found. " + self.location + ANALYSISFILE)
+            self.io.warning("Previous analysis found. " + self.location + ANALYSISFILE)
             return
         loc = self.location
         self._write_config(loc=loc)
@@ -81,7 +86,7 @@ class Analysis(Base):
         self.selectors = Catalogue(self.config['selectors'], suff='sel', autoload=True, data_type=Selector)
         self.trainings = Catalogue(self.config['trainings'], suff='trainer', autoload=False, data_type=Trainer)
         self.values = Catalogue(self.config['values'], suff='val',
-                                save_fcn=yaml.dump, load_fcn=yaml.load, autoload=True, binary_file=False)
+                                save_fcn=yaml.dump, load_fcn=yaml.load, autoload=True, binary_file=False, load_kwdct={'Loader': yaml.Loader})
 
     def _write_config(self, loc=None):
         """ Write the config file
