@@ -5,6 +5,9 @@ pandalyse
 
 A toolkit for an analysis environment with pandas.
 
+Documentation
+-------------
+
 [![Documentation Status](https://readthedocs.org/projects/pandalyse/badge/?version=latest)](https://pandalyse.readthedocs.io/en/latest/?badge=latest)
 
 
