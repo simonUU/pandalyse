@@ -19,6 +19,14 @@ The main features are
 * **Analysis**: Store and retrive Selectors, Trainings, numpy-arrays and dataframes in predefined locations: `df = ana.data.get("MySignalData")`
 
 
+Installation
+============
+
+::
+
+    pip install pandalyse 
+
+
 Usage
 =====
 

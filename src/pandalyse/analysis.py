@@ -82,7 +82,7 @@ class Analysis(Base):
 
         """
         self.data = Catalogue(self.config['data'], suff='hdf',
-                              save_fcn=fcn_save_dataframe, load_fcn=pd.read_hdf)
+                              save_fcn=fcn_save_dataframe, load_fcn=pd.read_hdf, create_files=False)
         self.selectors = Catalogue(self.config['selectors'], suff='sel', autoload=True, data_type=Selector)
         self.trainings = Catalogue(self.config['trainings'], suff='trainer', autoload=False, data_type=Trainer)
         self.values = Catalogue(self.config['values'], suff='val',
