@@ -48,6 +48,17 @@ def test_trainer_with_variables():
     assert isinstance(ret['lda_test'], pd.Series)    
     assert IsIterable(t.ret_prediction(sig))
 
+def test_trainer_with_variables_alternative():
+    X,y = make_classification(10, 5)
+    sig, bkg = create_test_data()
+    t = Trainer(['var0', 'var1', 'var2', 'var3', 'var4'])
+    t.add_method("lda_test", LDA())
+    t.fit(X, y)
+    ret = t.add_prediction(sig)
+    assert isinstance(ret, pd.DataFrame), type(ret)
+    assert isinstance(ret['lda_test'], pd.Series)    
+    assert IsIterable(t.ret_prediction(sig))    
+
 def test_Trainer_add_prediction_group():
     sig, bkg = create_test_data()
     sig, _ = create_test_data(100)

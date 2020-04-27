@@ -230,14 +230,27 @@ class Trainer(Base):
     def _df(self, df):
         """ Select variables from DataFrame if there are predefined
         """
+        if not isinstance(df, pd.DataFrame):
+            self.io.warning("Did not reicive dataframe")
+            return df
         return df if self.variables is None else df[self.variables] 
 
     def fit(self, sig, bkg, w=None):
-        for i in [sig, bkg]:
-            assert isinstance(i, pd.DataFrame), "Please provide pandas DataFrames for now"
-        X = sig.append(bkg)
-        X = X.fillna(-999)
-        y = np.append(np.zeros(len(sig)) == 0, np.zeros(len(bkg)) > 1)
+
+        if isinstance(bkg, pd.DataFrame):
+            # sig and bkg are DatFrames, construct X and y
+            for i in [sig, bkg]:
+                assert isinstance(i, pd.DataFrame), "Please provide pandas DataFrames for now"
+            X = self._df(sig).append(self._df(bkg))
+            X = X.fillna(-999)
+            y = np.append(np.zeros(len(sig)) == 0, np.zeros(len(bkg)) > 1)
+        else:
+            # X and y are given
+            if isinstance(sig, pd.DataFrame):
+                X = self._df(sig)
+            else:
+                X = sig
+            y = bkg
 
         if w is not None:
             w = np.append(np.ones(len(sig)), np.array(w))
@@ -255,13 +268,12 @@ class Trainer(Base):
             self.io.info('This took {:.2f} seconds'.format(end-start))
 
     def add_prediction(self, d, rank=False, outname=''):
-        d.fillna(-999, inplace=True)
+        # d.fillna(-999, inplace=True)
         for name in self.methods:
             try:
                 d[name+outname] = self.methods[name].predict_proba(self._df(d))[:, 1]
             except ValueError:
-                self.error("Input data has bad values.. skipping training")
-                return
+                self.error(f"Input data has bad values or shape.. skipping {name}")
             except AttributeError:
                 self.warn("no proba")
                 d[name+outname] = self.methods[name].predict(self._df(d))

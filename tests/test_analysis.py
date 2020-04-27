@@ -51,8 +51,3 @@ def test_analysis_catalogue_nparray(tmp_path):
     # print(pandalyse.__version__)
     assert ana.values.test_nparray[0] == 666
     
-    
-    
-
-    
-
