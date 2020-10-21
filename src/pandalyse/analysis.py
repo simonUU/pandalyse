@@ -126,7 +126,7 @@ class Analysis(Base):
         self._write_config()
 
     def set_trainer_location(self, location=None):
-        self.config.trainer = location
+        self.config.trainings = location
         self._write_config()
 
     def get_data(self, name=None):
